@@ -46,8 +46,6 @@ namespace WebApp.FunctionalTests
         /// <param name="output">xUnit output stream</param>
         public ApiIntegrationTest(AppTestFixture factory, ITestOutputHelper output)
         {
-            const string contentRoot = "Src/WebApp";
-
             _factory = factory;
             _output = output;
 
