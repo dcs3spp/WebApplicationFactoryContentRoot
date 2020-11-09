@@ -1,9 +1,6 @@
-using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,11 +8,13 @@ using Xunit.Abstractions;
 using WebApp;
 
 
+/// Set contentRoot to an invalid path, expecting Exception to be raised
+///
 /// Key should match FullName of assembly containing TStartup : WebApplicationFactory<TStartup> 
 /// https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactorycontentrootattribute?view=aspnetcore-3.0
 [assembly: WebApplicationFactoryContentRoot(
     "WebApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-    "../../Src/WebApp",
+    "/DirectoryDoesNotExist/Src/WebApp",
     "Program.cs",
     "1")]
 
@@ -55,19 +54,22 @@ namespace WebApp.FunctionalTests
         }
 
         /// <summary>
-        /// /Users/me/Development/dotnet/blazormotiondetectionlistener/WebApp/ not found
-        ///
-        /// Should be path /Users/me/Development/dotnet/blazormotiondetectionlistener/Src/WebApp/
+        /// Try to use the factory to create a client
         /// </summary>
         ///
         /// <remarks>
-        /// How do I use WebApplicationFactoryContentRoot attribute to correctly resolve this?
+        /// Shouldn't an error be raised here because path is invalid in 
+        /// assembly attribute contentRoot property?
+        /// 
+        /// Why is WebApplicationFactoryContentRoot being ignored?
+        /// What is the correct usage?
         /// </remarks>
         [Fact]
         public async Task WebApp_App_ApiController_Test()
         {
             var client = _factory.CreateClient();
 
+            Assert.True(client != null);
             await Task.CompletedTask;
         }
     }
