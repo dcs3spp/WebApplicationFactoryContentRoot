@@ -1,34 +1,38 @@
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Hosting;
 using Xunit;
 using Xunit.Abstractions;
 
-using WebApp;
 
-
-/// Set contentRoot to an invalid path, expecting Exception to be raised
+/// Set contentRoot to an invalid path, expecting Exception or warning to be raised
 ///
 /// Key should match FullName of assembly containing TStartup : WebApplicationFactory<TStartup> 
 /// https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactorycontentrootattribute?view=aspnetcore-3.0
 [assembly: WebApplicationFactoryContentRoot(
     "WebApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
     "/DirectoryDoesNotExist/Src/WebApp",
-    "Program.cs",
+    "appsettings.json",
     "1")]
 
 
 namespace WebApp.FunctionalTests
 {
     /// <summary>
-    /// Eventual Goal: Tryng to create WebApplicationFactory with content root at Src/WebApp using
-    /// appsettings file derived from ASPNETCORE_ENVIRONMENT variable. If
-    /// the variable is unset then defaults to appsettings.Local.json
+    /// Expecting exception or warning message to be raised for invalid content root
     /// </summary>
     public class AppTestFixture : WebApplicationFactory<Startup>
     {
-        //override methods here as needed for Test purpose
+        protected override IHostBuilder CreateHostBuilder()
+        {
+            var builder = base.CreateHostBuilder()
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+            return builder;
+        }
     }
 
 
@@ -62,15 +66,26 @@ namespace WebApp.FunctionalTests
         /// assembly attribute contentRoot property?
         /// 
         /// Why is WebApplicationFactoryContentRoot being ignored?
+        /// Is it failing silently and defaulting to dir where *.sln are located?
         /// What is the correct usage?
         /// </remarks>
         [Fact]
-        public async Task WebApp_App_ApiController_Test()
+        public async Task WebApp_ApiController_Test()
         {
-            var client = _factory.CreateClient();
+            var exceptionRaised = false;
 
-            Assert.True(client != null);
-            await Task.CompletedTask;
+            try
+            {
+                var client = _factory.CreateClient();
+
+                await client.GetAsync("http://localhost:5000/api/ping");
+            }
+            catch
+            {
+                exceptionRaised = true;
+            }
+
+            Assert.True(exceptionRaised);
         }
     }
 }

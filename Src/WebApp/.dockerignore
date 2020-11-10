@@ -1,0 +1,17 @@
+.config/
+.dockerignore
+.env
+.git
+.gitignore
+.vs
+.vscode
+**/.DS_Store
+CoverageReports/
+Docker/
+*.md
+**/bin/
+**/obj/
+**/node_modules/
+**/bower_components/
+**/wwwroot/lib/
+**/TestResults/

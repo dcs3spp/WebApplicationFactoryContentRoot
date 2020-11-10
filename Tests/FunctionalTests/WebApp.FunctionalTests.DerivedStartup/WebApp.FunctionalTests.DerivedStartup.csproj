@@ -16,6 +16,7 @@
     <PackageReference Include="Autofac" Version="6.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
@@ -26,11 +27,12 @@
     <ProjectReference Include="..\..\..\Src\WebApp\WebApp.csproj" />
   </ItemGroup>
 
-  <Target Name="AddGitMetadaAssemblyAttributes" BeforeTargets="CoreGenerateAssemblyInfo">
+  <Target Name="AddGitMetadaAssemblyAttributes"
+          BeforeTargets="CoreGenerateAssemblyInfo">
     <ItemGroup>
         <AssemblyAttribute Include="Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryContentRoot">
-            <_Parameter1>WebApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</_Parameter1>
-            <_Parameter2>\DirectoryDoesNotExist\Src\WebApp</_Parameter2>
+            <_Parameter1>WebApp.FunctionalTests.DerivedStartup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</_Parameter1>
+            <_Parameter2>\..\..\..\Src\WebApp</_Parameter2>
             <_Parameter3>appsettings.json</_Parameter3>
             <_Parameter4>1</_Parameter4>
         </AssemblyAttribute>
